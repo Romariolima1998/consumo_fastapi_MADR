@@ -1,6 +1,42 @@
 import os
+from madr.request import make_request
 
-token = True
+token = False
+url_login = 'http://127.0.0.1:8000/auth/token'
+url_users = 'http://127.0.0.1:8000/users'
+
+
+def login(url):
+
+    user = input('digite seu usuario: ')
+    password = input('digite sua senha: ')
+
+    request = make_request(
+        'post', url, data={"username": user, "password": password})
+
+    response = request.json()
+
+    if request.status_code != 200:
+        print(response.get('detail'))
+        return
+
+    print('logado com sucesso')
+
+    return f'{response.get("token_type")} {response.get("access_token")}'
+
+
+def create_user(method, url, data):
+
+    request = make_request(
+        method, url, json=data)
+
+    response = request.json()
+
+    if request.status_code != 200:
+        print(response.get('detail'))
+        return
+
+    print('usuario criado com sucesso')
 
 
 if not token:
@@ -16,9 +52,22 @@ if not token:
         os.system('clear')
 
         if value == '1':
-            ...
+            token = login(url_login)
+            if token:
+                break
+
         elif value == '2':
-            ...
+            username = input('digite um username: ')
+            email = input('digite seu email: ')
+            password = input('digite uma senha: ')
+
+            data = {
+                "username": username,
+                "email": email,
+                "password": password
+            }
+            create_user('post', url_users, data)
+
         elif value.lower() == 's':
             break
 
