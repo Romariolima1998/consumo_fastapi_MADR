@@ -33,7 +33,10 @@ def create_user(method, url, data):
         print(response.get('detail'))
         return
 
-    print('usuario criado com sucesso')
+    print('usuario criado com sucesso \n')
+    print(f'id: {response["id"]}')
+    print(f'username: {response["username"]}')
+    print(f'email: {response["email"]}')
 
 
 def list_users(url, index):
@@ -63,6 +66,19 @@ def update_user(url, id, data, headers):
     print(f'id: {response["id"]}')
     print(f'username: {response["username"]}')
     print(f'email: {response["email"]}')
+
+
+def delete(url, id, headers):
+    url = url + f'/{id}'
+
+    request = make_request('delete', url, headers=headers)
+
+    response = request.json()
+
+    if request.status_code != 200:
+        print(response.get('detail'))
+
+    print(response['message'])
 
 
 # ----------------------------------------------------------------------------
@@ -177,8 +193,18 @@ if token:
                     headers = {"Authorization": token}
 
                     update_user(url_users, id, data, headers)
+
                 elif value == '3':
-                    ...
+                    try:
+                        id = int(
+                            input('digite o id do usuario que deseja deletar: '))
+                    except:
+                        print('o id deve ser um numero')
+
+                    headers = {"Authorization": token}
+
+                    delete(url_users, id, headers)
+
                 elif value.lower() == 's':
                     break
 
