@@ -354,13 +354,95 @@ if token:
                 os.system('clear')
 
                 if value == '1':
-                    ...
+                    nome = input(
+                        'digite o nome do livro que deseja procurar: ')
+
+                    livros = search(url_livro, nome)
+
+                    for key, value in livros.items():
+                        for livro in value:
+                            print(
+                                '######################################################### \n')
+                            print(f'id: {livro["id"]}')
+                            print(f'ano: {livro["ano"]}')
+                            print(f'titulo: {livro["titulo"]}')
+                            print(f'id_romancista: {livro["id_romancista"]}')
+
                 elif value == '2':
-                    ...
+                    titulo = input('digite o nome do livro: ')
+
+                    try:
+                        ano = int(input('digite o ano do livro: '))
+                        id_romancista = int(
+                            input('digite o id do romancista: '))
+                    except:
+                        print('deve ser um numero')
+                        continue
+                    data = {
+                        "ano": ano,
+                        "titulo": titulo,
+                        "id_romancista": id_romancista
+                    }
+                    headers = {"Authorization": token}
+
+                    livro = create(url_livro, data, headers)
+
+                    if livro:
+
+                        print(f'id: {livro["id"]}')
+                        print(f'ano: {livro["ano"]}')
+                        print(f'titulo: {livro["titulo"]}')
+                        print(f'id_romancista: {livro["id_romancista"]}')
+
                 elif value == '3':
-                    ...
+                    try:
+                        id = int(
+                            input('digite o id do livro que deseja atualizar: '))
+
+                    except:
+                        print('deve ser um numero')
+                        continue
+
+                    try:
+                        ano = int(input('digite o ano do livro: '))
+                        id_romancista = int(
+                            input('digite o id do romancista: '))
+                    except:
+                        id_romancista = False
+                        ano = False
+
+                    titulo = input('digite o nome do livro: ')
+
+                    data = {}
+                    if ano:
+                        data.update({"ano": ano})
+                    if id_romancista:
+                        data.update({"id_romancista": id_romancista})
+                    if titulo:
+                        data.update({"titulo": titulo})
+
+                    headers = {"Authorization": token}
+
+                    livro = update(url_livro, id, data, headers)
+
+                    if livro:
+
+                        print(f'id: {livro["id"]}')
+                        print(f'ano: {livro["ano"]}')
+                        print(f'titulo: {livro["titulo"]}')
+                        print(f'id_romancista: {livro["id_romancista"]}')
+
                 elif value == '4':
-                    ...
+                    try:
+                        id = int(input(
+                            'digite o id do livro que deseja deletar: '))
+                    except:
+                        print('o id deve ser um numero')
+                        continue
+
+                    headers = {"Authorization": token}
+
+                    delete(url_livro, id, headers)
                 elif value.lower() == 's':
                     break
 
