@@ -4,6 +4,8 @@ from madr.request import make_request
 token = False
 url_login = 'http://127.0.0.1:8000/auth/token'
 url_users = 'http://127.0.0.1:8000/users'
+url_romancista = 'http://127.0.0.1:8000/romancista'
+url_livro = 'http://127.0.0.1:8000/livros'
 
 
 def login(url, data):
@@ -79,6 +81,49 @@ def delete(url, id, headers):
         print(response.get('detail'))
 
     print(response['message'])
+
+
+def search(url, nome):
+    url = url + f'?nome={nome}'
+
+    request = make_request('get', url)
+
+    response = request.json()
+
+    if request.status_code != 200:
+        print(response.get('detail'))
+        return
+
+    return response
+
+
+def create(url, data, headers):
+    request = make_request(
+        'post', url, json=data, headers=headers)
+
+    response = request.json()
+
+    if request.status_code != 201:
+        print(response.get('detail'))
+        return
+
+    print('criado com sucesso \n')
+
+    return response
+
+
+def update(url, id, data, headers):
+    url = url + f'/{id}'
+    request = make_request('patch', url, json=data, headers=headers)
+
+    response = request.json()
+
+    if request.status_code != 200:
+        print(response.get('detail'))
+        return
+    print('atualizado com sucesso \n')
+
+    return response
 
 
 # ----------------------------------------------------------------------------
@@ -228,13 +273,62 @@ if token:
                 os.system('clear')
 
                 if value == '1':
-                    ...
+                    nome = input(
+                        'digite o nome do romancista que deseja procurar: ')
+
+                    romancistas = search(url_romancista, nome)
+
+                    for key, value in romancistas.items():
+                        for romancista in value:
+                            print(
+                                '######################################################### \n')
+                            print(f'id: {romancista["id"]}')
+                            print(f'nome: {romancista["nome"]}')
+
                 elif value == '2':
-                    ...
+                    nome = input('digite o nome do romancista: ')
+                    data = {
+                        "nome": nome
+                    }
+                    headers = {"Authorization": token}
+
+                    romancista = create(url_romancista, data, headers)
+
+                    if romancista:
+                        print(f'id: {romancista["id"]}')
+                        print(f'nome: {romancista["nome"]}')
+
                 elif value == '3':
-                    ...
+                    try:
+                        id = int(input(
+                            'digite o id do romancista que deseja atualizar: '))
+                    except:
+                        print('o id deve ser um numero')
+                        continue
+
+                    nome = input('digite o novo nome do romancista: ')
+                    data = {
+                        "nome": nome
+                    }
+                    headers = {"Authorization": token}
+                    romancista = update(url_romancista, id, data, headers)
+
+                    if romancista:
+                        print(f'id: {romancista["id"]}')
+                        print(f'nome: {romancista["nome"]}')
+
                 elif value == '4':
-                    ...
+                    try:
+                        id = int(input(
+                            'digite o id do romancista que deseja deletar: '))
+                    except:
+                        print('o id deve ser um numero')
+                        continue
+
+                    headers = {"Authorization": token}
+
+                    delete(url_romancista, id, headers)
+
                 elif value.lower() == 's':
                     break
 
